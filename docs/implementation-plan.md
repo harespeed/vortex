@@ -56,7 +56,7 @@ flowchart LR
 | M7 v0.3 | 12 | Sensor/Actuator/Skill/World 契约草案、PWI、模拟世界 | 仿真中完成“看→指→抓”闭环 |
 | M8 v1.0 | 10 | 兼容/弃用策略、安全评审、性能基线 | 2+ 实现、6 个月使用、评审通过 |
 
-**v0.1 约 33 人日（6–7 周）；到 v1.0 约 65 人日（13 周）**，不含外部扩展开发。
+**v0.1 约 33 人日（6–7 周）；到 v1.0 约 115 人日（23 周）**，含知识层、不含外部扩展开发。知识层不阻塞 v0.1，放在 v0.2/v0.3。
 
 ---
 
@@ -75,6 +75,7 @@ flowchart LR
 | W8 | PWI | 快照/事件/指代/接地接口 + 默认实现 | 8 | W6 |
 | W9 | 测试 | 单元、契约、集成、故障、恢复、安全、fuzz | 8 | 全部 |
 | W10 | 文档与发布 | 构建/部署/升级、changelog、checksums、标签 | 3 | 全部 |
+| W11 | 知识层（v0.2+） | belief store、OWL-compatible schema、RDFS/OWL RL 子集、revision、OntologyPort | 50 | W2,W3 |
 
 **关键路径**：W0 → W2 → W3 → W5 → W7 → W8。W1/W6 可并行。
 

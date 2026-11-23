@@ -20,6 +20,7 @@ Status: **design only.** No implementation code yet.
 | [docs/robotics.md](docs/robotics.md) | Embodied extension contract |
 | [docs/hardware.md](docs/hardware.md) | Motors, joints, IO, bring-up |
 | [docs/world-interface.md](docs/world-interface.md) | Sensor-to-LLM world state |
+| [docs/knowledge-layer.md](docs/knowledge-layer.md) | Open-world knowledge: OWL-compatible schema, RDFS/OWL RL subset |
 
 ## Naming
 
@@ -33,4 +34,4 @@ extensions:  ext-software.* / ext-os.* / ext-hardware.*
 
 ## Non-goals
 
-No device drivers, no UI, no multi-tenant platform, no Kubernetes, no package manager.
+No device drivers, no UI, no multi-tenant platform, no Kubernetes, no package manager, no full OWL DL reasoner inside the kernel.

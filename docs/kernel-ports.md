@@ -84,6 +84,7 @@ flowchart TB
 | `ActuatorPort` | 命令 + 反馈 | 20–1000 Hz | 电机、铰链、夹爪、IO | 第二阶段 |
 | `SkillPort` | 长任务 | 20–50 Hz | 带进度/取消的物理技能 | 第二阶段 |
 | `WorldPort` | 查询 + 事件 | 1–50 Hz | 场景图、affordance、指代 | 第三阶段 |
+| `OntologyPort` | 请求/推理 | 按需 | OWL EL/DL 外部推理、TBox 分类 | 可选 |
 
 **端口只传语义，不传设备细节**：`ActuatorPort` 传“关节目标/限幅/安全等级”，不传“CAN ID 0x123 的 bit 4”。
 

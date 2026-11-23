@@ -143,6 +143,17 @@ stateDiagram-v2
 
 ---
 
+### 4.3 开放世界知识层
+
+- **kernel 原语**：实体/关系、断言、`true/false/unknown/conflicting`、provenance、时间、冲突、实体链接。
+- **语义**：开放世界；缺失 ≠ 假；显式否定才可为 `false`；不自动 `sameAs`。
+- **推理**：RDFS + OWL 2 RL 子集，前向链、物化、硬预算；推断与断言分离。
+- **外部推理**：完整 OWL EL/DL 走可选 `OntologyPort`，独立进程；失败降级，不阻塞主循环。
+- **归属**：知识底座在 kernel；领域本体（类/属性/规则）在 `ext-*` 领域包。
+- 详细设计见 [knowledge-layer.md](knowledge-layer.md)。
+
+---
+
 ## 5. 单 Agent 循环
 
 ```mermaid
