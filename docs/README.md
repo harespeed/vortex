@@ -17,7 +17,7 @@
 | [robotics.md](robotics.md) | 具身扩展：云端认知 / 边缘技能 / MCU 实时，技能契约与安全包络 | 机器人/安全 |
 | [hardware.md](hardware.md) | 电机、铰链、执行器、驱动器、电子 IO、台架与首次上电 | 硬件/机械 |
 | [world-interface.md](world-interface.md) | 物理世界接口：传感器→符号化状态→LLM；指代消解、接地、不确定性、时间新鲜度 | Agent/感知 |
-| [knowledge-layer.md](knowledge-layer.md) | **Kernel 知识层**：开放世界状态、OWL-compatible schema、RDFS/OWL RL 子集、provenance、belief revision | 架构/知识 |
+| [knowledge-layer.md](knowledge-layer.md) | **Kernel 知识层**：开放世界状态、统一 IR、RDFS/OWL RL 子集、Datalog、SHACL-like 约束、provenance、belief revision | 架构/知识 |
 | [kernel-ports.md](kernel-ports.md) | 最小内核与端口/适配器：母头契约、进程边界、版本、权限；扩展分 software/os/hardware 三类 | 架构/扩展开发 |
 | [general-agentic-system-design.md](general-agentic-system-design.md) | 通用 agentic system 的设计方案（为什么是单核 + 图壳 + 持久化） | 产品/架构 |
 | [2026-agent-framework-architecture-report.md](2026-agent-framework-architecture-report.md) | 2026 年框架与架构的市场/数据全景 | 研究/选型 |

@@ -12,11 +12,14 @@
 
 | 层 | 是否进 kernel | 说明 |
 |---|---|---|
-| **知识底座**：实体/关系、断言、状态、provenance、时间、冲突 | **是** | 这是 kernel 原语 |
-| **轻量推理**：RDFS + OWL 2 RL 子集，前向链 | **是** | 可自写规则引擎，零依赖 |
-| **完整 OWL EL/DL 推理**：ELK/HermiT/tableau | **否** | 放 `OntologyPort`，独立进程；避免把 Java/大依赖塞进 kernel |
+| **知识底座**：实体/关系、断言、状态、provenance、时间、冲突 | **是** | kernel 原语 |
+| **轻量规则**：RDFS + OWL 2 RL 子集 + stratified Datalog | **是** | 可自写规则引擎，零依赖 |
+| **约束**：SHACL-like shapes（写时/动作前校验） | **是** | 约束是执行契约，不是推理 |
+| **视图**：property graph / temporal / tabular | **是** | 同一份断言的多种查询视图 |
+| **完整 OWL EL/DL 推理**：ELK/HermiT/tableau | **否** | `OntologyPort` 独立进程 |
+| **因果 / 概率 / 向量** | **否** | 领域扩展，按需接入 |
 
-一句话：**kernel 拥有“开放世界知识的状态与规则”，不拥有“完整 OWL DL 推理器”。**
+一句话：**kernel 拥有“开放世界知识的状态、规则、约束与视图”，不拥有“完整 OWL DL 推理器”。**
 
 ---
 
@@ -35,6 +38,49 @@
 - 不做：完整 OWL DL 在线推理。
 
 ---
+
+### 2.1 KR 不是一种语言：用“最弱足够表达”的形式
+
+知识表示不是“选一个本体语言”，而是**按保证与成本选形式**：
+
+| 形式 | 保证 | 成本 | 典型用途 | 归属 |
+|---|---|---|---|---|
+| 类型化断言 + 状态 | 事实可追溯 | 低 | 实体、关系、unknown | kernel |
+| RDFS / OWL 2 RL 子集 | 分类/属性蕴含 | 低 | 类层次、domain/range、inverse | kernel |
+| Stratified Datalog | 递归推导 | 中 | 路径、依赖、规则链 | kernel |
+| SHACL-like shapes | 结构/基数约束 | 低 | 写时校验、动作前检查 | kernel |
+| Property graph | 遍历/邻域 | 低 | affordance、场景图 | kernel 视图 |
+| Temporal assertions | 时间有效性 | 中 | 状态变化、事件时间 | kernel |
+| OWL 2 EL/QL | 分类/查询重写 | 中高 | 大规模本体、查询展开 | `OntologyPort` |
+| OWL 2 DL | 完整 DL 蕴含 | 高 | 离线/批处理 | 外部 |
+| 因果图 / 概率 / 向量 | 干预/相似/不确定性 | 高 | 诊断、检索 | 领域扩展 |
+
+**原则：最弱足够表达（weakest sufficient formalism）。**
+
+- 能用断言+约束解决，就不要上规则；
+- 能用 RL/Datalog 解决，就不要上 DL；
+- 能用领域扩展解决，就不要进 kernel；
+- 只有“没有它答不对”的案例足够多，才升级表示。
+
+**判断**：KR 的价值不在“本体多大”，而在“表示是否匹配任务、是否可解释、是否可修订、是否能变成可执行约束”。
+
+### 2.2 统一 IR，而不是统一语言
+
+Kernel 只认一个**规范化中间表示（IR）**，再映射到不同形式：
+
+```text
+Term        : iri | blank | literal
+Statement   : s, p, o, status, confidence, valid_time, provenance
+Rule        : profile (rdfs|owl-rl|datalog), head, body, version
+Constraint   : shape_id, target, cardinality, datatype, severity
+View        : graph | table | temporal | vector
+Revision    : supersedes, reason, actor, timestamp
+```
+
+- 断言是唯一事实来源；规则/约束/视图都是派生。
+- 导入：Turtle/JSON-LD/OWL axioms/Datalog/SHACL shapes。
+- 导出：同一份 IR 可导出为 OWL/Turtle/Datalog/SHACL，供外部工具使用。
+- 不允许某个形式“拥有”状态；状态只在 IR 与 store 里。
 
 ## 3. 开放世界语义
 
@@ -110,6 +156,18 @@ SQLite 表 + 索引：
 ```
 
 ---
+
+### 4.2 多视图，不是多份真相
+
+| 视图 | 用途 | 实现 |
+|---|---|---|
+| Triple/IR | 事实与 provenance | SQLite 表 |
+| Property graph | 邻域/路径/affordance | 由 IR 物化或递归 CTE |
+| Temporal | as-of 查询、状态历史 | `valid_from/valid_to` + revision |
+| Tabular | 报表/审计 | 视图/导出 |
+| Vector（可选） | 相似实体/文本检索 | 扩展，不写回事实 |
+
+**规则**：视图可从 IR 重建；不允许只改视图不改 IR。删除/修订必须回到 IR。
 
 ## 5. 规则与推理
 
@@ -273,6 +331,8 @@ Knowledge.snapshot(as_of) -> version
 - ❌ 让推断覆盖断言。
 - ❌ 接受任意 SPARQL 字符串。
 - ❌ 把领域本体硬编码进 kernel。
+- ❌ 把 OWL 当唯一表示；Datalog/SHACL/图视图按需使用。
+- ❌ 追求“大一统本体”；从任务反推最小本体。
 - ❌ 让知识查询无预算。
 
 ---
@@ -284,4 +344,4 @@ Knowledge.snapshot(as_of) -> version
 
 > **OWL-compatible knowledge substrate + RDFS/OWL 2 RL 子集规则引擎 + 可选外部 EL/DL 推理端口。**
 
-这样 kernel 仍然零依赖、可审计、可预算；OWL 的完整推理能力在需要时通过 `OntologyPort` 接入，而不是把 kernel 变成推理器。
+这样 kernel 仍然零依赖、可审计、可预算；OWL 的完整推理能力在需要时通过 `OntologyPort` 接入，而不是把 kernel 变成推理器。**KR 的价值来自“表示匹配 + 可解释 + 可修订 + 可执行约束”，不是来自本体规模。**

@@ -75,7 +75,7 @@ flowchart LR
 | W8 | PWI | 快照/事件/指代/接地接口 + 默认实现 | 8 | W6 |
 | W9 | 测试 | 单元、契约、集成、故障、恢复、安全、fuzz | 8 | 全部 |
 | W10 | 文档与发布 | 构建/部署/升级、changelog、checksums、标签 | 3 | 全部 |
-| W11 | 知识层（v0.2+） | belief store、OWL-compatible schema、RDFS/OWL RL 子集、revision、OntologyPort | 50 | W2,W3 |
+| W11 | 知识层（v0.2+） | belief store、统一 IR、RDFS/OWL RL 子集、Datalog、SHACL-like、revision、OntologyPort | 50 | W2,W3 |
 
 **关键路径**：W0 → W2 → W3 → W5 → W7 → W8。W1/W6 可并行。
 
