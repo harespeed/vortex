@@ -1,12 +1,16 @@
-# Docs
+# Vortex Kernel Docs
 
-本目录是“家庭 Agent 系统”的设计与运维文档。**当前阶段只做设计与验证，不写实现代码。**
+本目录是 **Vortex** 的设计与运维文档。**Vortex 只是 kernel**：不是平台、不是扩展、不是终端产品。**当前阶段只做设计与验证，不写实现代码。**
+
+- Kernel：本仓库（运行时、端口契约、策略、状态、扩展监督）
+- Extensions：`ext-software` / `ext-os` / `ext-hardware`，在独立仓库
+- Product：家庭产品是另一个项目，不在本仓库
 
 ## 文档地图
 
 | 文档 | 内容 | 读者 |
 |---|---|---|
-| [scope.md](scope.md) | **项目范围：只写 kernel**；内/外范围、仓库结构、完成定义、边界规则 | 所有人 |
+| [scope.md](scope.md) | **项目范围：Vortex 只写 kernel**；内/外范围、仓库结构、完成定义、边界规则 | 所有人 |
 | [implementation-plan.md](implementation-plan.md) | **实施方案**：里程碑、WBS、人日、验收、测试、风险、决策门 | 所有人 |
 | [architecture.md](architecture.md) | 目标、约束、进程/线程模型、状态机、安全架构、供应链边界、CVE 结论、ADR | 架构/实现者 |
 | [howto.md](howto.md) | 从零构建 OpenSSL/SQLite、TLS、PQC 信封加密、沙箱、备份、CVE 监控 | 运维/实现者 |

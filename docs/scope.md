@@ -1,7 +1,7 @@
-# 项目范围：只写 Kernel
+# 项目范围：Vortex 只写 Kernel
 
 > 状态：设计稿。没有实现代码。  
-> 本仓库只实现 **agent kernel**：运行时、端口契约、策略、状态、事件、扩展监督、参考仿真适配器。  
+> **Vortex = kernel。** 本仓库只实现 **agent kernel**：运行时、端口契约、策略、状态、事件、扩展监督、参考仿真适配器。  
 > 所有真实设备/系统扩展（`ext-software`、`ext-os`、`ext-hardware`）在**其他仓库**实现。
 
 ---
@@ -27,7 +27,7 @@
 | 模型/工具路由 | 统一模型网关、工具注册表 | 不绑定厂商 |
 | 审计与观测 | 结构化日志、trace、成本 | 最小集 |
 | 最小控制 API | HTTP/SSE：提交 run、查状态、审批、取消 | 不含 UI |
-| CLI | `agentd`、`agentctl`、`agent-conformance` | 运维/测试 |
+| CLI | `vortexd`、`vortexctl`、`vortex-conformance` | 运维/测试 |
 | 参考适配器 | `ext-sim`：唯一在仓库内的适配器 | 用于契约测试 |
 | 测试 | 单元、契约、故障注入、恢复 | 必须可重复 |
 
@@ -66,7 +66,7 @@ kernel/
     ext/           # 扩展监督、握手、帧协议、健康
     pwi/           # 世界状态/指代/接地的接口与默认实现
     api/           # HTTP/SSE 最小控制面
-    cli/           # agentd / agentctl / conformance
+    cli/           # vortexd / vortexctl / conformance
   ext-sim/         # 参考适配器（测试用）
   tests/
     unit/ conformance/ fault/ recovery/
@@ -84,7 +84,7 @@ kernel/
 - [ ] 提交 run → 模型调用 → 工具调用 → 完成/失败，全链路可跑。
 - [ ] SQLite 持久化；杀进程后从检查点恢复。
 - [ ] 策略拒绝未授权工具；预算超限暂停。
-- [ ] `agentctl` 可创建用户、提交 run、查看 trace。
+- [ ] `vortexctl` 可创建用户、提交 run、查看 trace。
 - [ ] `ext-sim` 通过握手与契约测试。
 
 ### v0.2（可扩展）

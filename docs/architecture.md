@@ -1,7 +1,7 @@
-# 架构：家庭 Agent 系统（C++ / 零包管理器 / PQC-ready）
+# Vortex Kernel 架构（C++ / 零包管理器 / PQC-ready）
 
 > 状态：设计稿。没有实现代码。  
-> 范围：**本仓库只实现 kernel 层**；设备/系统/软件扩展在外部仓库。1 个用户先用，未来 ≤10 个家庭成员；单机部署；目标是可靠、可审计、可控成本，而不是多租户平台。详细边界见 [scope.md](scope.md)。
+> 范围：**Vortex 只是 kernel；本仓库只实现 kernel 层**；设备/系统/软件扩展在外部仓库。1 个用户先用，未来 ≤10 个家庭成员；单机部署；目标是可靠、可审计、可控成本，而不是多租户平台。详细边界见 [scope.md](scope.md)。
 
 ---
 
@@ -9,7 +9,7 @@
 
 ### 1.1 目标
 
-1. **单二进制、单进程**：一个 `agentd` + 一个数据目录即可运行。
+1. **单二进制、单进程**：一个 `vortexd` + 一个数据目录即可运行。
 2. **零包管理器**：不引入 pip/npm/vcpkg/conan；只允许 OpenSSL 与 SQLite amalgamation。
 3. **长任务可恢复**：分钟到小时级；崩溃/重启后从检查点继续。
 4. **每个副作用可审计**：工具调用、审批、模型版本、成本都有记录。
@@ -50,10 +50,10 @@
 flowchart TB
   subgraph EDGE["接入"]
     B["Browser / PWA"]
-    CLI["agentctl"]
+    CLI["vortexctl"]
     HOOK["Webhook"]
   end
-  subgraph PROC["agentd 单进程"]
+  subgraph PROC["vortexd 单进程"]
     ACC["Acceptor 线程"]
     CONN["连接线程：HTTP/SSE"]
     AUTH["认证 / CSRF / 限速"]

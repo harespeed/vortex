@@ -1,7 +1,7 @@
-# Kernel 实施方案（v0.1 → v1.0）
+# Vortex Kernel 实施方案（v0.1 → v1.0）
 
 > 状态：实施计划。**本文件不含代码；编码需另行启动。**  
-> 范围：只做 kernel。`ext-software` / `ext-os` / `ext-hardware` 在外部仓库。边界见 [scope.md](scope.md)。  
+> 范围：Vortex 只做 kernel。`ext-software` / `ext-os` / `ext-hardware` 在外部仓库。边界见 [scope.md](scope.md)。  
 > 假设：1 名开发者、每周 5 人日；C++20、macOS 优先、Linux 次之；零包管理器。
 
 ---
@@ -71,7 +71,7 @@ flowchart LR
 | W4 | 策略与审批 | 角色、工具/技能授权、不可逆确认、超时拒绝 | 4 | W3 |
 | W5 | 扩展监督 | UDS、帧协议、握手、版本协商、心跳、隔离、重启 | 8 | W2 |
 | W6 | 端口 v1 | Model/Tool/Event/Store schema 与错误模型 | 4 | W3 |
-| W7 | API/CLI | HTTP/SSE 控制面、`agentd`/`agentctl`/conformance | 5 | W1,W3 |
+| W7 | API/CLI | HTTP/SSE 控制面、`vortexd`/`vortexctl`/conformance | 5 | W1,W3 |
 | W8 | PWI | 快照/事件/指代/接地接口 + 默认实现 | 8 | W6 |
 | W9 | 测试 | 单元、契约、集成、故障、恢复、安全、fuzz | 8 | 全部 |
 | W10 | 文档与发布 | 构建/部署/升级、changelog、checksums、标签 | 3 | 全部 |
@@ -86,7 +86,7 @@ flowchart LR
 
 - [ ] 干净机器按 [howto.md](howto.md) 构建成功。
 - [ ] `otool -L`/`ldd` 只显示系统库（OpenSSL/SQLite 静态）。
-- [ ] `agentd --version` 输出版本与构建哈希。
+- [ ] `vortexd --version` 输出版本与构建哈希。
 - [ ] SQLite 打开、迁移、`PRAGMA integrity_check` 通过。
 - [ ] 日志结构化（JSON 行），级别可配。
 
@@ -214,7 +214,7 @@ flowchart LR
 
 | 交付 | 内容 |
 |---|---|
-| 二进制 | `agentd`、`agentctl`、`agent-conformance` |
+| 二进制 | `vortexd`、`vortexctl`、`vortex-conformance` |
 | 源码 | kernel 各模块 + `ext-sim` |
 | 测试 | 单元/契约/集成/故障/恢复/安全/fuzz |
 | 文档 | scope、architecture、ports、howto、robotics/hardware/world-interface |
@@ -235,7 +235,7 @@ flowchart LR
 | D6 | SSE 事件流 | curl 可见事件 |
 | D7 | checkpoint + 恢复测试 | kill -9 可恢复 |
 | D8 | 策略允许/拒绝 + 预算 | 拒绝路径可测 |
-| D9 | CLI + 集成测试 | `agentctl` 可用 |
+| D9 | CLI + 集成测试 | `vortexctl` 可用 |
 | D10 | ASan/UBSan + fuzz 骨架 + 演示 | 演示与报告 |
 
 ---

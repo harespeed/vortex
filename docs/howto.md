@@ -1,4 +1,4 @@
-# How-to：从零构建与运行（C++ / 零包管理器 / PQC-ready）
+# Vortex How-to：从零构建与运行（C++ / 零包管理器 / PQC-ready）
 
 > 状态：设计阶段的操作手册。**应用本身的命令标注为“目标”，尚未实现。**  
 > 目标平台：macOS（Apple Silicon / Intel）优先，Linux 次之。  
@@ -11,7 +11,7 @@
 ```text
 home-agent/
   CMakeLists.txt
-  src/                 # 目标：agentd / agentctl
+  src/                 # 目标：vortexd / vortexctl
   third_party/
     openssl/           # 源码构建产物（静态库 + 头文件）
     sqlite/            # sqlite3.c / sqlite3.h
@@ -126,7 +126,7 @@ echo 'PRAGMA compile_options;' | sqlite3 :memory: | grep -E 'FTS5|SESSION' || ec
 
 ---
 
-## 4. 构建 agentd（CMake 目标）
+## 4. 构建 vortexd（CMake 目标）
 
 `CMakeLists.txt` 的关键点：
 
@@ -146,17 +146,17 @@ target_compile_definitions(sqlite3 PRIVATE
   SQLITE_OMIT_DEPRECATED SQLITE_OMIT_SHARED_CACHE
   SQLITE_DEFAULT_FOREIGN_KEYS=1)
 
-add_executable(agentd src/main.cpp ...)
-target_link_libraries(agentd PRIVATE OpenSSL::SSL OpenSSL::Crypto sqlite3 pthread)
+add_executable(vortexd src/main.cpp ...)
+target_link_libraries(vortexd PRIVATE OpenSSL::SSL OpenSSL::Crypto sqlite3 pthread)
 
 if (APPLE)
-  target_compile_options(agentd PRIVATE -Wall -Wextra -Wpedantic
+  target_compile_options(vortexd PRIVATE -Wall -Wextra -Wpedantic
     -fstack-protector-strong -D_FORTIFY_SOURCE=3 -fPIE)
-  target_link_options(agentd PRIVATE -pie -Wl,-dead_strip)
+  target_link_options(vortexd PRIVATE -pie -Wl,-dead_strip)
 else()
-  target_compile_options(agentd PRIVATE -Wall -Wextra -Wpedantic
+  target_compile_options(vortexd PRIVATE -Wall -Wextra -Wpedantic
     -fstack-protector-strong -D_FORTIFY_SOURCE=3 -fPIE)
-  target_link_options(agentd PRIVATE -pie -Wl,-z,relro,-z,now)
+  target_link_options(vortexd PRIVATE -pie -Wl,-z,relro,-z,now)
 endif()
 ```
 
@@ -172,8 +172,8 @@ cmake --build build -j
 检查运行时依赖：
 
 ```bash
-otool -L build/agentd      # macOS：应只有系统库（OpenSSL/SQLite 静态链接）
-ldd build/agentd           # Linux：同上
+otool -L build/vortexd      # macOS：应只有系统库（OpenSSL/SQLite 静态链接）
+ldd build/vortexd           # Linux：同上
 ```
 
 ---
@@ -183,10 +183,10 @@ ldd build/agentd           # Linux：同上
 目标命令（待实现）：
 
 ```bash
-./build/agentd --data ./data --listen 127.0.0.1:8443 --tls-cert keys/server.crt --tls-key keys/server.key
+./build/vortexd --data ./data --listen 127.0.0.1:8443 --tls-cert keys/server.crt --tls-key keys/server.key
 
-./build/agentctl user add --name admin --role admin
-./build/agentctl user add --name kid1  --role kid
+./build/vortexctl user add --name admin --role admin
+./build/vortexctl user add --name kid1  --role kid
 ```
 
 规则：
@@ -319,10 +319,10 @@ unshare -n -r --fork \
 ### 8.3 目标命令（待实现）
 
 ```bash
-./build/agentctl keygen --alg hybrid-x25519-mlkem768 --out keys/household-1
-./build/agentctl seal   --key keys/household-1.pub --in backups/runs.tgz --out backups/runs.tgz.agf
-./build/agentctl open   --key keys/household-1.key --in backups/runs.tgz.agf --out backups/runs.tgz
-./build/agentctl rotate --old keys/household-1.key --new keys/household-2.pub --rewrap data/artifacts
+./build/vortexctl keygen --alg hybrid-x25519-mlkem768 --out keys/household-1
+./build/vortexctl seal   --key keys/household-1.pub --in backups/runs.tgz --out backups/runs.tgz.agf
+./build/vortexctl open   --key keys/household-1.key --in backups/runs.tgz.agf --out backups/runs.tgz
+./build/vortexctl rotate --old keys/household-1.key --new keys/household-2.pub --rewrap data/artifacts
 ```
 
 ### 8.4 测试用例
@@ -348,7 +348,7 @@ mkdir -p backups
 sqlite3 data/app.db ".backup 'backups/app.db'"
 tar -czf backups/runs.tgz data/runs data/artifacts
 # 目标：信封加密
-./build/agentctl seal --key keys/backup.pub --in backups/runs.tgz --out backups/runs.tgz.agf
+./build/vortexctl seal --key keys/backup.pub --in backups/runs.tgz --out backups/runs.tgz.agf
 ```
 
 保留 3 代；备份密钥离线保存（打印纸质恢复码或硬件密钥）。
@@ -360,8 +360,8 @@ tar -czf backups/runs.tgz data/runs data/artifacts
 sqlite3 backups/app.db "PRAGMA integrity_check;"
 tar -tzf backups/runs.tgz >/dev/null
 # 目标：解密并校验
-./build/agentctl open --key keys/backup.key --in backups/runs.tgz.agf --out /tmp/runs.tgz
-# 恢复到临时目录，启动 agentd，跑 3 条黄金任务
+./build/vortexctl open --key keys/backup.key --in backups/runs.tgz.agf --out /tmp/runs.tgz
+# 恢复到临时目录，启动 vortexd，跑 3 条黄金任务
 ```
 
 **没有演练过的备份 = 没有备份。**
@@ -392,7 +392,7 @@ done
 
 1. 记录当前版本与 `otool -L` / `ldd`。
 2. 下载新版本源码 → 校验 SHA-256。
-3. 重新构建 OpenSSL/SQLite/agentd。
+3. 重新构建 OpenSSL/SQLite/vortexd。
 4. 跑 20 条黄金集 + 沙箱逃逸测试 + TLS 协商测试。
 5. 检查 `Negotiated TLS1.3 group` 仍为 `X25519MLKEM768`。
 6. 备份 → 部署 → 观察 24 h。
